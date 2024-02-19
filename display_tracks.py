@@ -49,7 +49,7 @@ async def read_author(
         raise HTTPException(404, "Author not found")
 
     tracks = change_track_data(
-        crud.get_tracks_by_an_author(db, db.author.id),
+        crud.get_tracks_by_an_author(db, db_author.id),
         db
     )
     return templates.TemplateResponse(

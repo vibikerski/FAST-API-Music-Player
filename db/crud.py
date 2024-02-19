@@ -21,7 +21,7 @@ def authenticate_user(db: Session, username: str, password: str):
 
 
 def create_user(db: Session, username: str, password: str, rights: str = "user"):
-    salt = secrets.token_bytes(16)
+    salt = str(secrets.token_bytes(16))
     
     hashed_password = get_password_hash(password + salt)
     db_user = models.User(username=username, hashed_password=hashed_password, salt=salt, rights=rights)

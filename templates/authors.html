@@ -10,7 +10,7 @@
         <h1 class="bordered-element centered">Available Authors</h1>
         {% for author in authors %}
         <div class="bordered-element">
-            <h2><a href="{{author.alias}}">{{author.name}}</a></h2>
+            <h2><a href="/authors/{{author.alias}}">{{author.name}}</a></h2>
             <ul class="list-group needed-bg">
                 {% for track in author.tracks %}
                 <li class="list-group-item needed-bg"><a href="../tracks/{{track.alias}}">{{track.title}}</a></li>

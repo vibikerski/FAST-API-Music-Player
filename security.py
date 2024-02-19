@@ -51,12 +51,11 @@ async def token_get(form_data: OAuth2PasswordRequestForm = Depends(), db: Sessio
 
     return {"access_token": access_token, "token_type": "bearer"}
 
-@security_router.post("/users/", response_model=schemas.User)
-async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    if crud.get_user(db, user.username):
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    if crud.get_user(db, user['username']):
         raise HTTPException(400, "Such username already exists")
 
-    return crud.create_user(db, user.username, user.password)
+    return crud.create_user(db, user['username'], user['password'])
 
 @security_router.get("/auth")
 async def auth_page(request: Request):

@@ -14,7 +14,7 @@ templates = Jinja2Templates(directory="templates")
 playlist_router = APIRouter()
 
 
-@playlist_router.post("/music/playlists/", response_model=schemas.Playlist)
+@playlist_router.post("/playlists/", response_model=schemas.Playlist)
 async def create_playlist(
     playlist: schemas.PlaylistCreate,
     current_user: models.User = Depends(get_current_user),
@@ -85,8 +85,7 @@ async def get_playlist(
     db: Session = Depends(get_db)
 ):
     playlist = crud.get_playlist(db, playlist_alias=playlist_alias)
-    for track in playlist.tracks:
-        track = change_track_data(track, db)
+    playlist.tracks = change_track_data(playlist.tracks, db)
     return templates.TemplateResponse(
         "playlist.html",
         {"request": request,
