@@ -9,9 +9,8 @@ from starlette.requests import Request
 from handle_db import get_db
 from sqlalchemy.orm import Session
 from db import crud, schemas
+from secret_key import SECRET_KEY # excluded in gitignore
 
-# randomly generated secret key
-SECRET_KEY = "YDw3UExO5XT6iF99oUPZscy6JkwMJU9KqL0d4wZYhoCtHDFGI4gPR6HjetAPBYqr"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

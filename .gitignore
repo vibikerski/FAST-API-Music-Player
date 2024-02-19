@@ -162,3 +162,6 @@ cython_debug/
 
 static/audio/
 static/img/
+*.db
+audio_server.db
+secret_key.py

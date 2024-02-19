@@ -17,13 +17,11 @@ def authenticate_user(db: Session, username: str, password: str):
     if not user:
         return False
     salt = user.salt
-    if not verify_password(password, user.hashed_password, salt):
-        return False
-    return user
+    return user if verify_password(password, user.hashed_password, salt) else False
 
 
 def create_user(db: Session, username: str, password: str, rights: str = "user"):
-    salt = secrets.token_hex(16)
+    salt = secrets.token_bytes(16)
     
     hashed_password = get_password_hash(password + salt)
     db_user = models.User(username=username, hashed_password=hashed_password, salt=salt, rights=rights)

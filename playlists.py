@@ -13,8 +13,13 @@ templates = Jinja2Templates(directory="templates")
 
 playlist_router = APIRouter()
 
+
 @playlist_router.post("/music/playlists/", response_model=schemas.Playlist)
-async def create_playlist(playlist: schemas.PlaylistCreate, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def create_playlist(
+    playlist: schemas.PlaylistCreate,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     if playlist := crud.create_playlist(
         db,
         playlist.title,
@@ -23,11 +28,11 @@ async def create_playlist(playlist: schemas.PlaylistCreate, current_user: models
         current_user.id
     ):
         return playlist
-        
+
     raise HTTPException(400, "Playlist with this alias already exists")
 
 
-@playlist_router.post("/music/playlists/{playlist_alias}/tracks/{track_alias}")
+@playlist_router.post("/playlists/{playlist_alias}/tracks/{track_alias}")
 async def add_track_to_playlist(
     playlist_alias: str,
     track_alias: str,
@@ -35,10 +40,10 @@ async def add_track_to_playlist(
     db: Session = Depends(get_db)
 ):
     playlist = crud.get_playlist(db, playlist_alias=playlist_alias)
-    
+
     if not playlist:
         raise HTTPException(404, "Playlist not found")
-    
+
     if current_user.rights != "admin" and current_user.id != playlist.creator_id:
         raise HTTPException(403, "You are not allowed to modify this playlist")
 
@@ -48,14 +53,14 @@ async def add_track_to_playlist(
         track_alias=track_alias
     ):
         return added_track
-    
+
     raise HTTPException(404, "Track not found")
 
 
-@playlist_router.get("/music/playlists/all")
+@playlist_router.get("/playlists/all")
 async def get_playlists(request: Request, db: Session = Depends(get_db)):
     playlists = crud.get_playlists(db)
-    
+
     playlists_data = []
     for playlist in playlists:
         playlist_info = {
@@ -66,12 +71,25 @@ async def get_playlists(request: Request, db: Session = Depends(get_db)):
             "description": playlist.description
         }
         playlists_data.append(playlist_info)
-    
-    return templates.TemplateResponse("all_playlists.html", {"request": request, "playlists": playlists_data})
 
-@playlist_router.get("/music/playlists/{playlist_alias}")
-async def get_playlist(request: Request, playlist_alias:str, db: Session = Depends(get_db)):
+    return templates.TemplateResponse(
+        "all_playlists.html",
+        {"request": request, "playlists": playlists_data}
+    )
+
+
+@playlist_router.get("/playlists/{playlist_alias}")
+async def get_playlist(
+    request: Request,
+    playlist_alias: str,
+    db: Session = Depends(get_db)
+):
     playlist = crud.get_playlist(db, playlist_alias=playlist_alias)
     for track in playlist.tracks:
         track = change_track_data(track, db)
-    return templates.TemplateResponse("playlist.html", {"request": request, "playlist": playlist, "creator": playlist.creator.username})
+    return templates.TemplateResponse(
+        "playlist.html",
+        {"request": request,
+         "playlist": playlist,
+         "creator": playlist.creator.username}
+    )

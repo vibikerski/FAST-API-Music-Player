@@ -8,7 +8,8 @@ from handle_db import get_db
 
 post_router = APIRouter()
 
-@post_router.post("/music/authors/", response_model=schemas.Author)
+
+@post_router.post("/authors/", response_model=schemas.Author)
 async def create_author(
     author: schemas.AuthorCreate,
     db: Session = Depends(get_db),
@@ -17,7 +18,8 @@ async def create_author(
     check_admin_rights(current_user)
     return crud.create_author(db=db, author=author)
 
-@post_router.post("/music/authors/{author_alias}/tracks/", response_model=schemas.Track)
+
+@post_router.post("/authors/{author_alias}/", response_model=schemas.Track)
 async def create_track(
     author_alias: Annotated[str, Path(min_length=3, max_length=50)],
     track: schemas.TrackCreate,
@@ -29,5 +31,5 @@ async def create_track(
     file_extension = track.track_url.split(".")[-1]
     if file_extension not in allowed_extensions:
         raise HTTPException(400, "The file extension is not allowed")
-        
+
     return crud.create_track(db=db, track=track, author_alias=author_alias)
