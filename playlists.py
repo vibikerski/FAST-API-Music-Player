@@ -8,11 +8,9 @@ from db import crud, models, schemas
 from handle_db import *
 from security import get_current_user
 from display_tracks import change_track_data
-
-templates = Jinja2Templates(directory="templates")
+from app_initialize import templates
 
 playlist_router = APIRouter()
-
 
 @playlist_router.post("/playlists/", response_model=schemas.Playlist)
 async def create_playlist(

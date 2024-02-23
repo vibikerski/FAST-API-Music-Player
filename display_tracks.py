@@ -8,10 +8,9 @@ from sqlalchemy.orm import Session
 from db import crud, schemas
 
 from handle_db import *
+from app_initialize import templates
 
-templates = Jinja2Templates(directory="templates")
 tracks_router = APIRouter()
-
 
 def change_track_data(tracks, db):
     for track in tracks:
@@ -53,7 +52,7 @@ async def read_author(
         db
     )
     return templates.TemplateResponse(
-        "songsbyauthors.html",
+        "songs_by_authors.html",
         {"request": request, "author_name": db_author.name, "songs": tracks}
     )
 

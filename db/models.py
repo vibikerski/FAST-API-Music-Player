@@ -45,6 +45,8 @@ class User(Base):
     rights = Column(String, default="user")
     salt = Column(String)
     
+    bio = Column(String, default="")
+    
     playlists = relationship("Playlist", back_populates="creator")
 
 class Playlist(Base):
